@@ -45,19 +45,12 @@ h3 {
 }
 
 /* Button Style */
-.btn {
-    background-color: var(--main-color);
-    color: var(--background-white);
-    border: none;
-    border-radius: var(--border-radius);
-    box-shadow: var(--default-shadow);
-    transition: background-color 0.3s, box-shadow 0.3s;
+.btn, .btn:active, .btn:disabled{
+    background-color: var(--main-color) !important;
 }
 
-/* Hover and Active/Focus Hover States */
-.btn:hover, .btn:focus:hover {
-    background-color: var(--main-color-darker);
-    box-shadow: var(--default-shadow); /* Optional if you want a consistent shadow */
+.btn:hover {
+    background-color: var(--main-color-darker) !important;
 }
 
 /* Content Container */
@@ -68,6 +61,11 @@ h3 {
     background: var(--background-white);
     border-radius: var(--border-radius);
     box-shadow: var(--default-shadow);
+}
+
+.half-width {
+    max-width: 50%;
+    align-items: center;
 }
 
 /* Lists */

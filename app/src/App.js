@@ -1,19 +1,53 @@
 import React from 'react';
+import { AuthProvider } from './util/AuthContext';
+import { FlashMessageProvider } from './flash/FlashMessageContext';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthRoute } from './util/AuthContext';
+import Layout from './components/Layout';
 import Home from './pages/Home';
-import Test from './pages/Test';
+import Explore from './pages/Explore';
+import Search from './pages/Search';
+import Login from './pages/Login';
+import Logout from './pages/Logout';
+import Profile from './pages/Profile';
+import Saved from './pages/Saved';
+import Register from './pages/Register';
+import Test from './misc_pages/Test';
+import AccountVerification from './misc_pages/EmailVerification';
+import ResetPasswordRequest from './misc_pages/ResetPasswordRequest';
+
 import './App.css';
 
-function App() {
+
+const App = () => {
   return (
-    <Router>
-        <Routes>
-            <Route path="/" element={<Home />} exact />
-            <Route path="/test" element={<Test />} exact />
-            {/* <Route path="*" element={<NotFound />} /> */}
-        </Routes>
-    </Router>
+    <AuthProvider>
+      <FlashMessageProvider>
+        <Layout>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              {/* User routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/profile" element={<AuthRoute element={Profile} />} />
+              <Route path="/logout" element={<AuthRoute element={Logout} />} />
+              {/* Listing routes */}
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/saved" element={<AuthRoute element={Saved} />} />
+              {/* Misc routes */}
+              <Route path="/email-verification" element={<AccountVerification />} />
+              <Route path="/reset-password-request" element={<ResetPasswordRequest />} />
+              {/* Test routes */}
+              <Route path="/test" element={<Test />} />
+
+            </Routes>
+          </Router>
+        </Layout>
+      </FlashMessageProvider>
+    </AuthProvider>
   );
-}
+};
 
 export default App;

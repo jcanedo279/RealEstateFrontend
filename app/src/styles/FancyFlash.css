@@ -1,0 +1,101 @@
+/* FancyFlash Container Styling */
+.fancy-flash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0;
+    padding: 10px 0;
+}
+
+/* FancyFlash Message Styling */
+.fancy-flash {
+    width: 75%;
+    text-align: center; /* Center text horizontally */
+    padding: 10px;
+    font-weight: bold;
+    background-color: #17a2b8;
+    font-size: 1.2em;
+    color: white;
+    border-radius: 5px;
+    box-shadow: var(--default-shadow);
+}
+
+/* Flash Message Button Styling */
+.fancy-flash button {
+    float: right; /* Float button to the right */
+    background: none;
+    border: none;
+    color: inherit;
+    font-weight: bolder;
+    font-size: 1.2em;
+    box-shadow: var(--default-shadow);
+    cursor: pointer;
+    width: 50px; /* Adjust width as needed */
+}
+
+/* FancyFlash Statuses. */
+.fancy-flash.info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.fancy-flash.warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.fancy-flash.error {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.fancy-flash.success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.fancy-flash.fail {
+    background-color: #000000;
+    border-color: #000000;
+}
+
+
+/* FancyFlash Animations. */
+.fancy-flash.fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.fancy-flash.scaleUp {
+    animation: scaleUp 0.5s ease-in-out;
+}
+
+.fancy-flash.slideDown {
+    animation: slideDown 0.5s ease-in-out;
+}
+
+.fancy-flash.shake {
+    animation: shake 0.75s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}

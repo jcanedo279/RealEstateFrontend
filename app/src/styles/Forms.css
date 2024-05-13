@@ -42,11 +42,6 @@
     border-right: 1px solid #e0e0e0;
 }
 
-.btn:focus {
-    background-color: var(--main-color); /* Keep the normal background color */
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); /* Subtle white outline */
-}
-
 .total-count {
     font-size: 24px;
     font-weight: bold;
@@ -84,4 +79,8 @@
 
 .message-container.error {
     animation: shake 1s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.margin-right {
+   margin-right: 10px;
 }

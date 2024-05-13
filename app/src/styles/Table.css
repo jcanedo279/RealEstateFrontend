@@ -1,0 +1,53 @@
+/* Center align all text in the table */
+.table-bordered td,
+.table-bordered th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Style for the table header */
+.table-bordered thead th {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+/* Add these styles if not already present */
+.table-bordered td,
+.table-bordered th {
+    border-right: 1px solid black;
+}
+
+.table-bordered tr td:last-child,
+.table-bordered tr th:last-child {
+    border-right: none;
+}
+
+td {
+    text-align: center; /* Horizontally centers the content within the cell */
+    vertical-align: middle; /* Vertically centers the content within the cell */
+}
+
+/* Save Button */
+.save-btn:not(.saved) {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8px;
+    background-color: var(--background-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.save-btn.saved {
+    background-color: #ffeb3b;
+}
+
+.save-btn:hover {
+    background-color: #fdd835;
+}
+
+table.highlight>tbody>tr:hover {
+    background-color: var(--background-white) !important;
+}

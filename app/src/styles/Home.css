@@ -8,6 +8,9 @@
     justify-content: center;
     text-align: start;
     border-radius: var(--border-radius);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 /* Hero content styles */
