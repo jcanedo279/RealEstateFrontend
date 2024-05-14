@@ -1,39 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+
+import fetchBackendApi from '../util/Util';
+import { useFlashMessage } from '../flash/FlashMessageContext';
+import MessageContainer from '../flash/FlashMessageContainer';
+
 
 const BackendDataComponent = () => {
-    const [backendResponse, setBackendResponse] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { addFailMessage, addMessage } = useFlashMessage();
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/test`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data from the backend');
+        const fetchData = async () => {
+            try {
+                const data = await fetchBackendApi('/test');
+                if (data.fancy_flash) {
+                    data.fancy_flash.forEach(message => addMessage({
+                        message: message.message,
+                        status: message.status,
+                        flash_id: message.flash_id,
+                        animation: message.animation
+                    }));
                 }
-                return response.json();
-            })
-            .then(data => {
-                setBackendResponse(data.msg);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-                setError(error.message);
-                setLoading(false);
-            });
+            } catch (error) {
+                addFailMessage(error, 'test');
+            }
+        };
+    
+        fetchData();
     }, []);
 
     return (
-        <div>
+        <div className='container'>
             <h1>Response from Backend:</h1>
-            {loading ? (
-                <p>Loading...</p>
-            ) : error ? (
-                <p>Error: {error}</p>
-            ) : (
-                <p>{backendResponse || "No response from backend"}</p>
-            )}
+            <MessageContainer flash_id="test" maxMessages={1} />
         </div>
     );
 };

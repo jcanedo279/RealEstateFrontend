@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fetchBackendApi from '../util/Util';
+import MessageContainer from '../flash/FlashMessageContainer';
+import { useFlashMessage } from '../flash/FlashMessageContext';
+import { useAuth } from '../util/AuthContext';
 
 import '../styles/FancyFlash.css'; // Ensure this file is available in your project
 
 
-const ResetPasswordRequest = ({ currentUser }) => {
+const PasswordRequestNew = ({ currentUser }) => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
-    const [messageType, setMessageType] = useState(''); // 'success', 'error', etc.
+    const { addFailMessage, addMessage } = useFlashMessage();
+    const { getCsrfToken } = useAuth();
 
     // Determine if the user is authenticated
     const isAuthenticated = currentUser && currentUser.email;
@@ -29,25 +32,34 @@ const ResetPasswordRequest = ({ currentUser }) => {
         event.preventDefault();
 
         try {
-            const data = await fetchBackendApi(
-                '/reset-password-request',
-                {
-                    method: 'POST',
-                    data: { email }
-                }
-            );
+            const data = await fetchBackendApi('/password/request-new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': await getCsrfToken()
+                },
+                data: { userEmail: email }
+            });
 
-            setMessage(data.msg);
-            setMessageType(data.error);
-            if (data.status == 'success') {
+            if (data.fancy_flash) {
+                console.log("Password request new data has flash messages:", data.fancy_flash);
+                data.fancy_flash.forEach(message => addMessage({
+                    message: message.message,
+                    status: message.status,
+                    flash_id: message.flash_id,
+                    animation: message.animation
+                }));
+            }
+            
+            // To check for a success message to navigate after showing the message
+            const successMessage = data.fancy_flash.find(msg => msg.status === 'success');
+            if (successMessage) {
                 setTimeout(() => {
                     navigate('/login');
-                }, 2000);
+                }, 3000);
             }
         } catch (error) {
-            console.error('Unable to fetch from backend: ', error.message);
-            setMessage('An unexpected error occurred. Please try again.');
-            setMessageType('error');
+            addFailMessage(error, 'password-request-new');
         }
 
     };
@@ -74,10 +86,8 @@ const ResetPasswordRequest = ({ currentUser }) => {
                         <button type="submit" className="btn">Send Reset Link</button>
                     </>
                 )}
-                <div className={`message-container ${messageType}`}>
-                    <p>{message}</p>
-                </div>
             </form>
+            <MessageContainer flash_id="password-request-new" maxMessages={1} />
             <div>
                 <div className="spacer"></div>
                 <a href="/login">Return to login</a>
@@ -86,4 +96,4 @@ const ResetPasswordRequest = ({ currentUser }) => {
     );
 };
 
-export default ResetPasswordRequest;
+export default PasswordRequestNew;

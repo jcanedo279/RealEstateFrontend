@@ -97,13 +97,13 @@ const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyR
         setTooltipInfo({ show: false, content: {}, position: {} });
     };
 
-    // if (loading) {
-    //     return (
-    //         <div className='container'>
-    //             <p>Loading...</p>
-    //         </div>
-    //     );
-    // }
+    if (loading) {
+        return (
+            <div className='container'>
+                <p>Loading...</p>
+            </div>
+        );
+    }
 
     return (
         <div>

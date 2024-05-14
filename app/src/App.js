@@ -14,7 +14,8 @@ import Saved from './pages/Saved';
 import Register from './pages/Register';
 import Test from './misc_pages/Test';
 import AccountVerification from './misc_pages/EmailVerification';
-import ResetPasswordRequest from './misc_pages/ResetPasswordRequest';
+import PasswordRequestNew from './misc_pages/PasswordRequestNew';
+import PasswordSetNew from './misc_pages/PasswordSetNew';
 
 import './App.css';
 
@@ -37,11 +38,11 @@ const App = () => {
               <Route path="/search" element={<Search />} />
               <Route path="/saved" element={<AuthRoute element={Saved} />} />
               {/* Misc routes */}
-              <Route path="/email-verification" element={<AccountVerification />} />
-              <Route path="/reset-password-request" element={<ResetPasswordRequest />} />
+              <Route path="/email/verify/:token" element={<AccountVerification />} />
+              <Route path="/password/request-new" element={<PasswordRequestNew />} />
+              <Route path="/password/set-new/:token" element={<PasswordSetNew />} />
               {/* Test routes */}
               <Route path="/test" element={<Test />} />
-
             </Routes>
           </Router>
         </Layout>

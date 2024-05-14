@@ -77,7 +77,7 @@ const Explore = () => {
 
                 <div className="input-field form-element">
                     <label htmlFor="city">City Name (Optional):</label>
-                    <input type="text" id="city" name="city" value={formData.city} />
+                    <input type="text" id="city" name="city" value={formData.city} onChange={handleInputChange} />
                 </div>
 
                 <div className="input-field">

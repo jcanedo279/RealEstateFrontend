@@ -79,7 +79,7 @@ function Login() {
                 <div className="center">
                     Don't have an account? <a href="/register">Register here</a>
                     <br />
-                    Forgot your password? <a href="/reset-password-request">Reset it</a>
+                    Forgot your password? <a href="/password/request-new">Reset it</a>
                 </div>
             </div>
         </div>

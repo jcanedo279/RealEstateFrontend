@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
                     </a>
                     <a href="/" className="brand-logo center">
                         <img src={`${process.env.PUBLIC_URL}/assets/images/logo_rounded_white.png`} alt="Logo" style={{ height: '40px', verticalAlign: 'middle', marginRight: '5px', marginBottom: '5px' }} />
-                        Profit Prophet
+                        Real Estate Rover
                     </a>
                     <a href="#" data-target="login-slide-out" className="sidenav-trigger right show-on-large sidenav-right">
                         <i className="material-icons">Account</i>
