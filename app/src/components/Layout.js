@@ -1,87 +1,189 @@
-import React, { useEffect } from 'react';
-import M from 'materialize-css';
-import '../styles/Style.css'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+    AppBar,
+    CssBaseline,
+    Drawer,
+    Box,
+    Toolbar,
+    Typography,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import HomeIcon from '@mui/icons-material/Home';
+import ExploreIcon from '@mui/icons-material/Explore';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import SearchIcon from '@mui/icons-material/Search';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import PersonIcon from '@mui/icons-material/Person';
+import LoginIcon from '@mui/icons-material/Login';
 import { useAuth } from '../util/AuthContext';
+import StyledIconButton from './material/StyledIconButton';
+import StyledButton from './material/StyledButton';
+import { useTheme } from '@mui/material/styles';
 
 
-const Layout = ({ children }) => {
+const Layout = ({ children, alignTop = 'space', opacity = 1 }) => {
     const { authState: { isAuthSession } } = useAuth();
+    const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
+    const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
+    const theme = useTheme();
 
-    useEffect(() => {
-        // Initialize side navigation when component mounts
-        const leftNavElems = document.querySelectorAll('.sidenav');
-        M.Sidenav.init(leftNavElems);
+    let mt;
+    switch (alignTop) {
+        case 'align':
+            mt = theme.spacingFactor.double;
+            break;
+        case 'space':
+            mt = theme.spacingFactor.double + theme.spacingFactor.single;
+            break;
+        case 'none':
+        default:
+            mt = 0;
+            break;
+    }
 
-        // Initialize right-side navigation when component mounts
-        const rightNavElems = document.querySelectorAll('.sidenav-right');
-        M.Sidenav.init(rightNavElems, { edge: 'right' });
-    }, []);
+    const toggleDrawer = (drawer, open) => () => {
+        if (drawer === 'left') {
+        setLeftDrawerOpen(open);
+        } else {
+        setRightDrawerOpen(open);
+        }
+    };
 
     return (
-        <div>
-            {/* Main Navigation Sidebar */}
-            <nav>
-                <div className="nav-wrapper main-color">
-                    <a href="#" data-target="slide-out" className="sidenav-trigger show-on-large sidenav-left">
-                        <i className="material-icons">Menu</i>
-                    </a>
-                    <a href="/" className="brand-logo center">
-                        <img src={`${process.env.PUBLIC_URL}/assets/images/logo_rounded_white.png`} alt="Logo" style={{ height: '40px', verticalAlign: 'middle', marginRight: '5px', marginBottom: '5px' }} />
-                        Real Estate Rover
-                    </a>
-                    <a href="#" data-target="login-slide-out" className="sidenav-trigger right show-on-large sidenav-right">
-                        <i className="material-icons">Account</i>
-                    </a>
-                </div>
-            </nav>
+        <>
+            <CssBaseline />
+            <AppBar position="fixed" sx={{ backgroundColor: 'primary.main', opacity: opacity }}>
+                <Toolbar>
+                    <StyledIconButton
+                        edge="start"
+                        onClick={toggleDrawer('left', true)}
+                    >
+                        <MenuIcon fontSize='medium' />
+                    </StyledIconButton>
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+                        <StyledButton
+                            children = {<>
+                                <img src={`${process.env.PUBLIC_URL}/assets/images/logo_rounded_white.png`} alt="Logo" style={{ height: theme.spacing(4), marginRight: theme.spacing(1) }} />
+                                <Typography variant="h3" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+                                    Real Estate Rover
+                                </Typography>
+                            </>}
+                            textStyle = 'secondary'
+                            component={Link}
+                            to='/'
+                            sx={{ textTransform: 'none', boxShadow: 'none' }}
+                        />
+                    </Box>
+                    <StyledIconButton
+                        edge="end"
+                        onClick={toggleDrawer('right', true)}
+                    >
+                        <AccountCircle fontSize='medium' />
+                    </StyledIconButton>
+                </Toolbar>
+            </AppBar>
 
-            {/* Features Side Navigation (Left) */}
-            <ul id="slide-out" className="sidenav sidenav-left">
-                <li><a href="/">
-                    <i className="fas fa-home left"></i>Home
-                </a></li>
-                <li><a href="/explore">
-                    <i className="fas fa-globe-americas left"></i>
-                    Explore
-                </a></li>
-                <li><a href="/search">
-                    <i className="fas fa-search left"></i>
-                    Property Search
-                </a></li>
-                {isAuthSession &&
-                    <li><a href="/saved">
-                        <i className="fas fa-heart left"></i>
-                        Saved
-                    </a></li>}
-            </ul>
+            <Drawer anchor="left" open={leftDrawerOpen} onClose={toggleDrawer('left', false)}>
+                <Box sx={{ width: 250 }}>
+                    <List>
+                        <ListItem button component={Link} to="/">
+                            <ListItemIcon><HomeIcon /></ListItemIcon>
+                            <ListItemText
+                                primary={
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Home
+                                    </Typography>
+                                }
+                            />
+                        </ListItem>
+                        <ListItem button component={Link} to="/explore">
+                            <ListItemIcon><ExploreIcon /></ListItemIcon>
+                            <ListItemText
+                                primary={
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Explore
+                                    </Typography>
+                                }
+                            />
+                        </ListItem>
+                            <ListItem button component={Link} to="/search">
+                            <ListItemIcon><SearchIcon /></ListItemIcon>
+                            <ListItemText
+                                primary={
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Property Search
+                                    </Typography>
+                                }
+                            />
+                        </ListItem>
+                        {isAuthSession && (
+                            <ListItem button component={Link} to="/saved">
+                                <ListItemIcon><FavoriteIcon /></ListItemIcon>
+                                <ListItemText
+                                    primary={
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                            Saved
+                                        </Typography>
+                                    }
+                                />
+                            </ListItem>
+                        )}
+                    </List>
+                </Box>
+            </Drawer>
 
-            {/* Login Side Navigation (Right) */}
-            <ul id="login-slide-out" className="sidenav sidenav-right">
-                {isAuthSession ? (
-                    <>
-                        <li><a href="/profile">
-                            <i className="fas fa-user-circle left"></i>
-                            Your Profile
-                        </a></li>
-                        <li><a href="/logout">
-                            <i className="fas fa-sign-out-alt left"></i>
-                            Logout
-                        </a></li>
-                    </>
-                ) : (
-                    <li><a href="/login">
-                        <i className="fas fa-user left"></i>
-                        Login
-                    </a></li>
-                )}
-            </ul>
-            
-            {/* Page content */}
-            <div>
-                {/* Render the child components (route components) */}
+            <Drawer anchor="right" open={rightDrawerOpen} onClose={toggleDrawer('right', false)}>
+                <Box sx={{ width: 250 }}>
+                    <List>
+                        {isAuthSession ? (
+                            <>
+                                <ListItem button component={Link} to="/profile">
+                                    <ListItemIcon><PersonIcon /></ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                Your Profile
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItem>
+                                <ListItem button component={Link} to="/logout">
+                                    <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                Logout
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItem>
+                            </>
+                        ) : (
+                            <ListItem button component={Link} to="/login">
+                                <ListItemIcon><LoginIcon /></ListItemIcon>
+                                <ListItemText
+                                    primary={
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                            Login
+                                        </Typography>
+                                    }
+                                />
+                            </ListItem>
+                        )}
+                    </List>
+                </Box>
+            </Drawer>
+
+            <Box sx={{ mt: mt, gap: theme.spacingFactor.single, height: '100%' }}>
                 {children}
-            </div>
-        </div>
+            </Box>
+        </>
     );
 };
 

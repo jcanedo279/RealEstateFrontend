@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import {
+    Box,
+    Paper,
+    FormControl,
+    Typography,
+    useTheme
+} from '@mui/material';
+import StyledTextField from '../components/material/StyledTextField';
+import StyledButton from '../components/material/StyledButton';
 import ListingsRetriever from '../util/ListingsRetriever';
-import M from 'materialize-css';
-
-import '../styles/Forms.css';
+import Layout from '../components/Layout';
 
 const Search = () => {
     const [formData, setFormData] = useState({
@@ -10,21 +17,14 @@ const Search = () => {
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
-
-    useEffect(() => {
-        M.AutoInit();
-        setTimeout(() => M.updateTextFields(), 0);
-    }, []);
+    const theme = useTheme();
 
     const handleInputChange = (event) => {
         const { id, value } = event.target;
-        setFormData(prevFormData => {
-            const updatedFormData = {
-                ...prevFormData,
-                [id]: value
-            };
-            return updatedFormData;
-        });
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            [id]: value
+        }));
     };
 
     const handleSubmit = (event) => {
@@ -34,19 +34,35 @@ const Search = () => {
     };
 
     return (
-        <div>
-            <form id="propertyForm" className="container" onSubmit={handleSubmit}>
-                <div class="input-field form-element">
-                    <input id="property_address" type="text" name="property_address" required onChange={handleInputChange} />
-                    <label for="property_address">Enter Property Address:</label>
-                </div>
+        <Layout>
+            <Box sx={{ maxWidth: '50%', mx: 'auto' }}>
+                <Paper sx={{ p: theme.spacingFactor.single }}>
+                    <Typography variant="h4" sx={{ mb: theme.spacingFactor.single, textAlign: 'center' }}>
+                        Search by Property Address
+                    </Typography>
+                    <Box
+                        component="form"
+                        onSubmit={handleSubmit}
+                        sx={{  display: 'flex', flexDirection: 'column', gap: theme.spacingFactor.half }}
+                    >
+                        <FormControl fullWidth>
+                            <StyledTextField
+                                id='property_address'
+                                label='Enter Property Address'
+                                name='property_address'
+                                value={formData.property_address}
+                                onChange={handleInputChange}
+                            />
+                        </FormControl>
+                        <StyledButton
+                            children = 'Search by Address'
+                            type = 'submit'
+                            fullWidth
+                        />
+                    </Box>
+                </Paper>
+            </Box>
 
-                <button className="btn waves-effect waves-light main-color" type="submit">
-                    <i className="material-icons center">Search by Address</i>
-                </button>
-            </form>
-
-            {/* Conditionally render ListingsRetriever if the form has been submitted */}
             {isSubmitted && (
                 <ListingsRetriever
                     route='search'
@@ -56,7 +72,7 @@ const Search = () => {
                     emptyResponseMessage='No properties match the given criteria.'
                 />
             )}
-        </div>
+        </Layout>
     );
 };
 

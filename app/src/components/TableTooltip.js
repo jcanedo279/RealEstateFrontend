@@ -1,47 +1,84 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Popper, Typography, Box } from '@mui/material';
 
-import '../styles/TableTooltip.css'
 
-
-const Tooltip = ({ show, content, position }) => {
+const TableTooltip = ({ show, content, position }) => {
     const tooltipRef = useRef(null);
-    const [adjustedPosition, setAdjustedPosition] = useState(position);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     useEffect(() => {
-        if (show && tooltipRef.current) {
-            const tooltipNode = tooltipRef.current;
-            const tooltipWidth = tooltipNode.offsetWidth;
-            const tooltipHeight = tooltipNode.offsetHeight;
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-      
-            // Check for horizontal overflow
-            const overflowRight = position.x + tooltipWidth + 10 > windowWidth;
-            const newX = overflowRight ? position.x - tooltipWidth - 10 : position.x + 15;
-      
-            // Check for vertical overflow
-            const overflowBottom = position.y + tooltipHeight + 10 > windowHeight;
-            const newY = overflowBottom ? position.y - tooltipHeight - 10 : position.y + 15;
-      
-            setAdjustedPosition({ x: newX, y: newY });
+        if (show) {
+            setAnchorEl({
+                clientWidth: 0,
+                clientHeight: 0,
+                getBoundingClientRect: () => ({
+                    top: position.y,
+                    left: position.x,
+                    right: position.x,
+                    bottom: position.y,
+                    width: 0,
+                    height: 0,
+                }),
+            });
+        } else {
+            setAnchorEl(null);
         }
-    }, [position, show, tooltipRef]);
-
-    const tooltipStyle = {
-        position: 'fixed',
-        top: `${adjustedPosition.y}px`,
-        left: `${adjustedPosition.x}px`,
-        visibility: show ? 'visible' : 'hidden',
-        display: show ? 'block' : 'none', // Ensures the tooltip is not considered in layout when not shown
-        zIndex: '1000', // Ensure tooltip is on top
-    };
+    }, [show, position]);
 
     return (
-        <div ref={tooltipRef} className="global-tooltip" style={tooltipStyle}>
-            <div className="tooltip-header">{content.key}</div>
-            {content.description && <div className="tooltip-body">{content.description}</div>}
-        </div>
+        <Popper
+            open={show}
+            anchorEl={anchorEl}
+            placement="top-start"
+            modifiers={[
+                {
+                    name: 'offset',
+                    options: {
+                        offset: [10, 10],
+                    },
+                },
+                {
+                    name: 'preventOverflow',
+                    options: {
+                        boundary: 'viewport',
+                    },
+                },
+            ]}
+        >
+            <Box
+                ref={tooltipRef}
+                sx={{
+                    p: 2,
+                    backgroundColor: '#f9f9f9',
+                    border: '1px solid #ddd',
+                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+                    borderRadius: 2,
+                    minWidth: 250,
+                    maxWidth: 350,
+                    overflow: 'hidden',
+                    whiteSpace: 'pre-wrap',
+                }}
+            >
+                <Typography
+                    variant="subtitle1"
+                    sx={{
+                        fontWeight: 'bold',
+                        marginBottom: 1,
+                        backgroundColor: '#f0f0f0',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                    }}
+                >
+                    {content.key}
+                </Typography>
+                {content.description && (
+                    <Typography variant="body2" sx={{ color: '#555' }}>
+                        {content.description}
+                    </Typography>
+                )}
+            </Box>
+        </Popper>
     );
 };
 
-export default Tooltip;
+export default TableTooltip;

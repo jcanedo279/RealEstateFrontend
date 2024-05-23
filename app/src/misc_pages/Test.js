@@ -1,17 +1,19 @@
 import React, { useEffect } from 'react';
 
-import fetchBackendApi from '../util/Util';
 import { useFlashMessage } from '../flash/FlashMessageContext';
 import MessageContainer from '../flash/FlashMessageContainer';
+import Layout from '../components/Layout';
+import { useAuth } from '../util/AuthContext';
 
 
 const BackendDataComponent = () => {
     const { addFailMessage, addMessage } = useFlashMessage();
+    const { fetchBackendApiWithContext } = useAuth();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await fetchBackendApi('/test');
+                const data = await fetchBackendApiWithContext('test');
                 if (data.fancy_flash) {
                     data.fancy_flash.forEach(message => addMessage({
                         message: message.message,
@@ -29,10 +31,10 @@ const BackendDataComponent = () => {
     }, []);
 
     return (
-        <div className='container'>
+        <Layout>
             <h1>Response from Backend:</h1>
             <MessageContainer flash_id="test" maxMessages={1} />
-        </div>
+        </Layout>
     );
 };
 

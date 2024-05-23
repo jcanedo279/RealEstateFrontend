@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import fetchBackendApi from '../util/Util';
+import { Box, Container, Typography, Link, FormControl, useTheme } from '@mui/material';
 import MessageContainer from '../flash/FlashMessageContainer';
 import { useFlashMessage } from '../flash/FlashMessageContext';
+import StyledTextField from '../components/material/StyledTextField';
+import StyledButton from '../components/material/StyledButton';
+import Layout from '../components/Layout';
 import { useAuth } from '../util/AuthContext';
-
-import '../styles/FancyFlash.css'; // Ensure this file is available in your project
 
 
 const PasswordRequestNew = ({ currentUser }) => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const { addFailMessage, addMessage } = useFlashMessage();
-    const { getCsrfToken } = useAuth();
+    const theme = useTheme();
+    const { fetchBackendApiWithContext } = useAuth();
 
     // Determine if the user is authenticated
     const isAuthenticated = currentUser && currentUser.email;
@@ -32,12 +34,8 @@ const PasswordRequestNew = ({ currentUser }) => {
         event.preventDefault();
 
         try {
-            const data = await fetchBackendApi('/password/request-new', {
+            const data = await fetchBackendApiWithContext('password/request-new', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': await getCsrfToken()
-                },
                 data: { userEmail: email }
             });
 
@@ -65,34 +63,58 @@ const PasswordRequestNew = ({ currentUser }) => {
     };
 
     return (
-        <div className="container">
-            <h1>Reset Your Password</h1>
-            <form onSubmit={handleSubmit}>
-                {isAuthenticated ? (
-                    <p>Your password reset link will be sent to your registered email: {currentUser.email}</p>
-                ) : (
-                    <>
-                        <label htmlFor="email">Email:</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            required
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={handleInputChange}
-                        />
-                        <div className="spacer"></div>
-                        <button type="submit" className="btn">Send Reset Link</button>
-                    </>
-                )}
-            </form>
-            <MessageContainer flash_id="password-request-new" maxMessages={1} />
-            <div>
-                <div className="spacer"></div>
-                <a href="/login">Return to login</a>
-            </div>
-        </div>
+        <Layout>
+            <Container maxWidth="sm">
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        bgcolor: 'background.paper',
+                        gap: theme.spacingFactor.half,
+                        borderRadius: theme.shape.borderRadius,
+                        boxShadow: 3,
+                        p: theme.spacingFactor.single
+                    }}
+                >
+                    <Typography variant="h4" sx={{ mb: theme.spacingFactor.half }}>
+                        Reset Your Password
+                    </Typography>
+                    <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+                        {isAuthenticated ? (
+                            <Typography variant="body1">
+                                Your password reset link will be sent to your registered email: {currentUser.email}
+                            </Typography>
+                        ) : (
+                            <>
+                                <FormControl fullWidth>
+                                    <StyledTextField
+                                        id="email"
+                                        label="Enter your email"
+                                        name="email"
+                                        value={email}
+                                        fullWidth
+                                        onChange={handleInputChange}
+                                        sx={{ mb: theme.spacingFactor.half }}
+                                    />
+                                </FormControl>
+                                <StyledButton
+                                    children='Send Reset Link'
+                                    type='submit'
+                                    fullWidth
+                                />
+                            </>
+                        )}
+                    </form>
+                    <MessageContainer flash_id="password-request-new" maxMessages={1} />
+                    <Box>
+                        <Link href="/login" underline="hover" sx={{ color: theme.palette.text.primary }}>
+                            Return to login
+                        </Link>
+                    </Box>
+                </Box>
+            </Container>
+        </Layout>
     );
 };
 

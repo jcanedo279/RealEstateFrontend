@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Forms.css';
-import { useAuth } from '../util/AuthContext';
+import { CssBaseline, Link, Paper, Box, Grid, Avatar, Typography, FormControl, useTheme } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import MessageContainer from '../flash/FlashMessageContainer';
 import { useFlashMessage } from '../flash/FlashMessageContext';
+import { useAuth } from '../util/AuthContext';
+import StyledTextField from '../components/material/StyledTextField';
+import StyledButton from '../components/material/StyledButton';
+import Layout from '../components/Layout';
 
 
 function Login() {
@@ -12,7 +16,8 @@ function Login() {
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
-    const { addFailMessage, addMessage } = useFlashMessage();
+    const { addFailMessage, addMessage, clearMessages } = useFlashMessage();
+    const theme = useTheme();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -34,6 +39,7 @@ function Login() {
             if (successMessage) {
                 setTimeout(() => {
                     navigate('/profile');
+                    clearMessages('login');
                 }, 3000);
             }
         } catch (error) {
@@ -44,45 +50,117 @@ function Login() {
     };
 
     return (
-        <div className="container login-container">
-            <div className="login-box">
-                <h2 className="login-title center">Login to Your Account</h2>
-                <div className="spacer"></div>
-                <form id="loginForm" className="login-form" onSubmit={handleSubmit}>
-                    <div className="input-field">
-                        <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            required
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                        <label htmlFor="email">Email</label>
-                    </div>
-                    <div className="input-field">
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            required
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                        />
-                        <label htmlFor="password">Password</label>
-                    </div>
-                    <button id="loginBtn" className="btn waves-effect waves-light main-color" type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
-                <MessageContainer flash_id="login" maxMessages={1} />
-                <div className="center">
-                    Don't have an account? <a href="/register">Register here</a>
-                    <br />
-                    Forgot your password? <a href="/password/request-new">Reset it</a>
-                </div>
-            </div>
-        </div>
+        <Layout alignTop='align'>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <CssBaseline />
+                <Grid container component="main" sx={{ flex: 1 }}>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={6}
+                        sx={{
+                            backgroundImage: 'url(https://source.unsplash.com/random?real-estate)',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundColor: (t) => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            zIndex: -1
+                        }}
+                    />
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={6}
+                        component={Paper}
+                        elevation={6}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%',
+                            backgroundColor: theme.palette.background.default,
+                            borderTopRightRadius: theme.borderRadius.single,
+                            borderBottomRightRadius: theme.borderRadius.single
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: '70%',
+                                maxWidth: '400px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                p: theme.spacingFactor.single,
+                                borderRadius: theme.borderRadius.quarter,
+                                boxShadow: 3,
+                                backgroundColor: theme.palette.background.paper,
+                            }}
+                        >
+                            <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                                <LockOutlinedIcon />
+                            </Avatar>
+                            <Typography variant="h6" component="h1" sx={{ mb: theme.spacingFactor.single, fontWeight: 'bold', color: theme.palette.primary.main }}>
+                                Sign in
+                            </Typography>
+                            <Box
+                                component="form"
+                                noValidate
+                                onSubmit={handleSubmit}
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column', 
+                                    width: '100%',
+                                    gap: theme.spacingFactor.half,
+                                    backgroundColor: theme.palette.background.paper
+                                }}
+                            >
+                                <FormControl fullWidth>
+                                    <StyledTextField
+                                        id='email'
+                                        label='Email Address'
+                                        name='email'
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth>
+                                    <StyledTextField
+                                        id='password'
+                                        label='Password'
+                                        name='password'
+                                        value={password}
+                                        type='password'
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                </FormControl>
+                                <StyledButton
+                                    children = 'Sign In'
+                                    type = 'submit'
+                                    fullWidth
+                                    disabled={isSubmitting}
+                                />
+                                <MessageContainer flash_id="login" maxMessages={1} />
+                                <Grid container sx={{ flexWrap: 'nowrap', alignItems: 'center' }}>
+                                    <Grid item sx={{ flexGrow: 1, color: theme.palette.text.primary }}>
+                                        <Link href="/password/request-new" variant="body2" sx={{ color: theme.palette.text.primary, display: 'inline-flex' }}>
+                                            Forgot password?
+                                        </Link>
+                                    </Grid>
+                                    <Grid item sx={{ flexShrink: 0, color: theme.palette.text.primary, textAlign: 'right' }}>
+                                        <Link href="/register" variant="body2" sx={{ color: theme.palette.text.primary, display: 'inline-flex' }}>
+                                            Don't have an account? Sign Up
+                                        </Link>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Box>
+        </Layout>
     );
 }
 

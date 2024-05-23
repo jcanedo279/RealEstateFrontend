@@ -1,27 +1,22 @@
-import fetchBackendApi from './Util';
+import internalFetchBackendApi from './Util';
 
 
 const CSRF_ACCESS_TOKEN_KEY = 'csrf_access_token';
 const CSRF_REFRESH_TOKEN_KEY = 'csrf_refresh_token';
 const SESSION_INFO_KEY = 'session_info';
 
-export const getCsrfAccessToken = () => localStorage.getItem(CSRF_ACCESS_TOKEN_KEY);
-export const getCsrfRefreshToken = () => localStorage.getItem(CSRF_REFRESH_TOKEN_KEY);
+const getCsrfAccessToken = () => localStorage.getItem(CSRF_ACCESS_TOKEN_KEY);
+const getCsrfRefreshToken = () => localStorage.getItem(CSRF_REFRESH_TOKEN_KEY);
 
 const getSessionInfo = () => {
     const sessionInfoString = localStorage.getItem(SESSION_INFO_KEY);
     return sessionInfoString ? JSON.parse(sessionInfoString) : null;
 };
 
-export const getAccessExpires = () => getSessionInfo()?.access_expires;
-export const getRefreshExpires = () => getSessionInfo()?.refresh_expires;
-export const getStatus = () => getSessionInfo()?.status;
+const getAccessExpires = () => getSessionInfo()?.access_expires;
+const getRefreshExpires = () => getSessionInfo()?.refresh_expires;
+const getStatus = () => getSessionInfo()?.status;
 
-
-export function hasExpired(datetimeStr) {
-    // ISO 8601 formatted datetime string.
-    return new Date(datetimeStr) < new Date();
-}
 
 function setClientData(token_key, token) {
     localStorage.setItem(token_key, token);
@@ -33,28 +28,24 @@ function clearClientData(token_key) {
 
 export const isAuthSession = () => getStatus() === 'authenticated';
 
-export const isAccessValid = () => {
+function hasExpired(datetimeStr) {
+    // ISO 8601 formatted datetime string.
+    return new Date(datetimeStr) < new Date();
+}
+
+const isAccessValid = () => {
     const accessExpires = getAccessExpires();
     return accessExpires && !hasExpired(accessExpires);
 };
 
-export const isRefreshValid = () => {
+const isRefreshValid = () => {
     const refreshExpires = getRefreshExpires();
     return refreshExpires && !hasExpired(refreshExpires);
 };
 
-export const isSessionValid = () => {
+const isSessionValid = () => {
     if (!getSessionInfo()) return false;
-    return isAuthSession() ? isAccessValid() && isRefreshValid() : isAccessValid();
-};
-
-const clearServerTokens = async () => {
-    try {
-        await fetchBackendApi('/clean-session', {method: 'POST', });
-        console.log('Tokens cleared on the server');
-    } catch (error) {
-        console.error('Error clearing tokens on server:', error);
-    }
+    return isAccessValid();
 };
 
 function updateSessionInfo(newSessionInfo) {
@@ -64,7 +55,7 @@ function updateSessionInfo(newSessionInfo) {
 }
 
 // Start a session, clean up the previous session.
-export function startSession(session_info, csrf_access_token, csrf_refresh_token=null) {
+function startSession(session_info, csrf_access_token, csrf_refresh_token=null) {
     clearClientData(CSRF_ACCESS_TOKEN_KEY);
     clearClientData(CSRF_REFRESH_TOKEN_KEY);
     setClientData(CSRF_ACCESS_TOKEN_KEY, csrf_access_token);
@@ -76,7 +67,7 @@ export function startSession(session_info, csrf_access_token, csrf_refresh_token
 
 export const startAuthSession = async (email, password) => {
     try {
-        const data = await fetchBackendApi('/start-auth-session', {
+        const data = await internalFetchBackendApi('/start-auth-session', {
             method: 'POST',
             data: { user_email: email, user_password: password }
         });
@@ -98,22 +89,17 @@ export const startAnonSession = async () => {
         return true
     }
     try {
-        await clearServerTokens();
-        const data = await fetchBackendApi('/start-anon-session', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
+        const data = await internalFetchBackendApi('/start-anon-session', { method: 'GET' });
         console.log("Anon session data is: ", data);
         const session_data = data.session_data;
         if (session_data && session_data.session_info && session_data.csrf_access_token) {
             startSession(session_data.session_info, session_data.csrf_access_token);
             return true;
         }
-        return false;
     } catch (error) {
         console.error('Error starting anonymous session:', error);
-        return false;
     }
+    return false;
 };
 
 const fallbackAnonSession = async () => {
@@ -122,55 +108,57 @@ const fallbackAnonSession = async () => {
 }
 
 // Refresh an authenticated session after the access token expires.
-export const refreshAuthSession = async () => {
-    if (!isRefreshValid()) {
-        console.error('No valid refresh token available.');
-        await fallbackAnonSession();
-        return false;
-    }
-
+const refreshAuthSession = async () => {
     try {
-        const csrf_refresh_token = getCsrfRefreshToken();
-        const data = await fetchBackendApi('/refresh-auth-session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrf_refresh_token
-            }
-        });
+        const data = await fetchBackendApi('/refresh-auth-session', { method: 'POST' }, true);
         const session_data = data.session_data;
         if (session_data.session_info && session_data.csrf_access_token) {
-            startSession(session_data.session_info, session_data.csrf_access_token, csrf_refresh_token);
+            startSession(session_data.session_info, session_data.csrf_access_token, session_data.csrf_refresh_token);
             return true;
         }
-        await fallbackAnonSession();
-        return false;
     } catch (error) {
         console.error('Error refreshing authenticated session:', error);
-        await fallbackAnonSession();
-        return false;
     }
+    return await fallbackAnonSession();
 };
 
 // Refresh session token based on type (anonymous or authenticated)
-export const refreshSessionIfNeeded = async () => {
+const refreshSessionIfNeeded = async () => {
     if (!isSessionValid()) {
         console.log('Session is not valid, re-validating...')
-        return getStatus() === 'authenticated' ? await refreshAuthSession() : await startAnonSession();
+        return (isAuthSession() && isRefreshValid()) ? await refreshAuthSession() : await startAnonSession();
     }
     return true;
 };
 
-export const maybeGetCsrfToken = async (refresh=false) => {
+const maybeGetCsrfToken = async () => {
     // Ensure the session is valid.
     const isSessionValid = await refreshSessionIfNeeded();
     if (!isSessionValid) {
         throw new Error("Unable to validate session.");
     }
 
-    const csrfToken = refresh ? getCsrfRefreshToken() : getCsrfAccessToken();
+    const csrfToken = getCsrfAccessToken();
     if (!csrfToken) {
         throw new Error("Request csrf token unavailable. Please refresh the page.");
     }
     return csrfToken;
 }
+
+export const fetchBackendApi = async (route, options = {}, refresh = false) => {
+    // In the future, handle maybeGetCsrfToken failures better.
+
+    // Dynamically add the CSRF token to the headers in options.
+    const updatedHeaders = {
+        ...options.headers,
+        'Content-Type': 'application/json',
+        // To avoid an infinite loop when dynamically fetching the csrf token, we conditionally force the refresh token.
+        'X-CSRF-Token': refresh ? getCsrfRefreshToken() : await maybeGetCsrfToken()
+    };
+    const updatedOptions = {
+        ...options,
+        headers: updatedHeaders,
+    };
+
+    return internalFetchBackendApi(route, updatedOptions);
+};

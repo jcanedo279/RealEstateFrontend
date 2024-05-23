@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import ListingsRetriever from '../util/ListingsRetriever';
-import M from 'materialize-css';
+import Layout from '../components/Layout';
 
 import '../styles/Forms.css';
 
-const Results = () => {
+const Saved = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
 
     useEffect(() => {
-        M.AutoInit();
-        fetchData();  // Fetch data immediately when the component mounts
+        fetchData();
     }, []);
 
     const fetchData = () => {
@@ -19,21 +18,17 @@ const Results = () => {
     };
 
     return (
-        <div>
-            <div className="scrolling-content">
-                <div className="fullscreen-div-padding" id="resultsTable">
-                    {isSubmitted && (
-                        <ListingsRetriever
-                            route='saved'
-                            shouldFetch={shouldFetch}
-                            onDataFetched={() => setShouldFetch(false)}
-                            emptyResponseMessage='No saved properties on your account.'
-                        />
-                    )}
-                </div>
-            </div>
-        </div>
+        <Layout alignTop = 'align'>
+            {isSubmitted && (
+                <ListingsRetriever
+                    route='saved'
+                    shouldFetch={shouldFetch}
+                    onDataFetched={() => setShouldFetch(false)}
+                    emptyResponseMessage='No saved properties on your account.'
+                />
+            )}
+        </Layout>
     );
 };
 
-export default Results;
+export default Saved;

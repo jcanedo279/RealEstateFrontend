@@ -19,22 +19,16 @@ const api = axios.create({
  * @returns {object} - The parsed response data from the server.
  * @throws {Error} - Error message extracted from the response or a default error.
  */
-async function fetchBackendApi(route, options = {}, csrfToken = '') {
+async function internalFetchBackendApi(route, options = {}) {
     try {
         // Set a default request method to 'GET' if not provided
         const { method = 'GET', headers = {}, ...restOptions } = options;
-
-        // Create a new set of headers, adding the CSRF token if present
-        const finalHeaders = {
-            ...headers,
-            ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-        };
 
         // Make the Axios request using the given route and options
         const response = await api({
             url: route,
             method,
-            headers: finalHeaders,
+            headers: headers,
             ...restOptions,
         });
 
@@ -46,4 +40,4 @@ async function fetchBackendApi(route, options = {}, csrfToken = '') {
     }
 }
 
-export default fetchBackendApi;
+export default internalFetchBackendApi;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFlashMessage } from './FlashMessageContext';
+import { Box } from '@mui/material';
 import FlashMessage from './FlashMessage';
 
 import '../styles/FancyFlash.css';
@@ -18,8 +19,13 @@ const MessageContainer = ({ flash_id, maxMessages, width = "100%" }) => {
         }
     }, [messages, flash_id, maxMessages, removeMessage]);
 
+    // If there are no messages, return null to prevent rendering
+    if (!messages[flash_id] || messages[flash_id].length === 0) {
+        return null;
+    }
+
     return (
-        <div className="fancy-flash-container">
+        <Box className="fancy-flash-container" sx={{ width: '100%' }}>
             {(messages[flash_id] || []).slice(-maxMessages).map((msg) => (
                 <FlashMessage
                     key={msg.id}
@@ -28,7 +34,7 @@ const MessageContainer = ({ flash_id, maxMessages, width = "100%" }) => {
                     width={width}
                 />
             ))}
-        </div>
+        </Box>
     );
 };
 

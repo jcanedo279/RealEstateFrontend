@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
-import fetchBackendApi from '../util/Util';
+import { Paper, Typography, Container, useTheme } from '@mui/material';
 import { useFlashMessage } from '../flash/FlashMessageContext';
 import MessageContainer from '../flash/FlashMessageContainer';
+import Layout from '../components/Layout';
+import { useAuth } from '../util/AuthContext';
 
 
 const EmailVerification = () => {
     const { addFailMessage, addMessage } = useFlashMessage();
     const navigate = useNavigate();
     const { token } = useParams();
+    const { fetchBackendApiWithContext } = useAuth();
+    const theme = useTheme();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,7 +27,7 @@ const EmailVerification = () => {
             }
         
             try {
-                const data = await fetchBackendApi(`/email/verify/${token}`, { method: 'POST' });
+                const data = await fetchBackendApiWithContext(`email/verify/${token}`, { method: 'POST' });
                 if (data.fancy_flash) {
                     data.fancy_flash.forEach(message => addMessage({
                         message: message.message,
@@ -50,10 +53,26 @@ const EmailVerification = () => {
     }, [token]);
 
     return (
-        <div className="container">
-            <h1>Email Verification</h1>
-            <MessageContainer flash_id="email-verify" maxMessages={1} />
-        </div>
+        <Layout>
+            <Container maxWidth="sm">
+                <Paper
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        bgcolor: 'background.paper',
+                        p: theme.spacingFactor.single,
+                        borderRadius: 2,
+                        boxShadow: 3,
+                    }}
+                >
+                    <Typography variant="h4" sx={{ mb: theme.spacingFactor.half }}>
+                        Email Verification
+                    </Typography>
+                    <MessageContainer flash_id="email-verify" maxMessages={1} />
+                </Paper>
+            </Container>
+        </Layout>
     );
 };
 

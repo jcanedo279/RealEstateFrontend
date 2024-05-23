@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 
-import fetchBackendApi from '../util/Util';
 import MessageContainer from '../flash/FlashMessageContainer';
 import { useFlashMessage } from '../flash/FlashMessageContext';
-
-
-import heroImage from '../assets/images/home_scott_webb.webp';
-import investImage from '../assets/images/invest_tierra_mallorca.webp';
-import nightstandImage from '../assets/images/nightstand_benjamin_voros.webp';
-
-import '../styles/Home.css';
-import '../styles/Forms.css';
+import { Box, CssBaseline, Grid, Link, Paper, Typography, Container } from '@mui/material';
+import StyledTextField from '../components/material/StyledTextField';
+import StyledButton from '../components/material/StyledButton';
+import { useTheme } from '@mui/material/styles';
+import { useAuth } from '../util/AuthContext';
+import Layout from '../components/Layout';
 
 
 function Home() {
     const [userEmail, setUserEmail] = useState('');
     const [issueDescription, setIssueDescription] = useState('');
     const { addFailMessage, addMessage } = useFlashMessage();
+    const theme = useTheme();
+    const { fetchBackendApiWithContext } = useAuth();
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent default form submission
@@ -27,7 +26,7 @@ function Home() {
         };
       
         try {
-            const data = await fetchBackendApi('/report/app-issue', {
+            const data = await fetchBackendApiWithContext('report/app-issue', {
                 method: 'POST',
                 data: JSON.stringify(reportFormData)
             });
@@ -53,85 +52,210 @@ function Home() {
         }
       };
 
-    return (
-        <main className="container">
-            {/* Landing Section */}
-            <section className="hero-section center" style={{ backgroundImage: `url(${heroImage})` }}>
-                <div className="hero-content text-center">
-                    <h1 className="center">Welcome to Real Estate Rover</h1>
-                    <p className="flow-text">
-                        Unlock Intelligent Real Estate Investment Decisions with Real Estate Rover.
-                        Harness the power of data science and AI with Real Estate Rover, your one-stop platform for real estate analysis and investment insights.
-                        Designed for both new investors and seasoned professionals, our platform helps you uncover investment opportunities and assess property potentials efficiently.
-                    </p>
-                </div>
-            </section>
+      return (
+        <Layout alignTop='align'>
+            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
+                <CssBaseline />
 
-            <div className="spacer"></div>
+                {/* Hero Section */}
+                <Box
+                    sx={{
+                        position: 'relative',
+                        backgroundImage: 'url(https://source.unsplash.com/random?real-estate)',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        color: '#fff',
+                        py: 15,
+                        textAlign: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderBottomLeftRadius: theme.borderRadius.single,
+                        borderBottomRightRadius: theme.borderRadius.single
+                    }}
+                >
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            borderBottomLeftRadius: theme.borderRadius.single,
+                        borderBottomRightRadius: theme.borderRadius.single
+                        }}
+                    />
+                    <Container maxWidth="md" sx={{ zIndex: 1 }}>
+                        <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: theme.borderRadius.quarter, p: 3 }}>
+                            <Typography variant="h2" component="h2" gutterBottom sx={{ color: theme.palette.primary.main }}>
+                                Welcome to Real Estate Rover
+                            </Typography>
+                            <Typography variant="h5" component="p" sx={{ color: theme.palette.text.primary }}>
+                                Unlock Intelligent Real Estate Investment Decisions with Real Estate Rover.
+                                Harness the power of data science and AI with Real Estate Rover, your one-stop platform for real estate analysis and investment insights.
+                            </Typography>
+                        </Box>
+                    </Container>
+                </Box>
 
-            <section className="hero-section center" style={{ backgroundImage: `url(${investImage})` }}>
-                {/* About Section */}
-                <div className="hero-content text-center">
-                    <h2 className="center">How It Works</h2>
-                    <p className="flow-text">
-                        Start by using our Explore feature to sift through market trends and historical data or use our Direct Search to look up specific properties.
-                        Here’s how you can benefit:
-                        <ul className="fa-ul">
-                            <li className="custom-li"><a href="/explore"><span className="fa-li"><i className="fas fa-chart-bar"></i></span><strong>Explore:</strong> Analyze broader market trends to identify areas with high growth potential.</a></li>
-                            <li className="custom-li"><a href="/search"><span className="fa-li"><i className="fas fa-search"></i></span><strong>Direct Search:</strong> Instantly retrieve detailed information on any listed property.</a></li>
-                        </ul>
-                    </p>
-                </div>
+                {/* Floating Container */}
+                <Container component="main" maxWidth="lg" sx={{ zIndex: 2 }}>
+                    <Paper elevation={6} sx={{ mt: -theme.spacingFactor.single, mb: theme.spacingFactor.single, p: theme.spacingFactor.single, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: theme.borderRadius.quarter }}>
+                        
+                        {/* Features Section */}
+                        <Box sx={{ mt: theme.spacingFactor.single, mb: theme.spacingFactor.single, textAlign: 'center' }}>
+                            <Grid container spacing={theme.spacingFactor.single}>
+                                <Grid item xs={12} sm={4}>
+                                    <Paper elevation={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', p: theme.spacingFactor.single, textAlign: 'center', boxShadow: 1 }}>
+                                        <Typography variant="h4" component="h2">
+                                            5,000+
+                                        </Typography>
+                                        <Typography variant="h6" component="p">
+                                            Active Listings
+                                        </Typography>
+                                        <Typography variant="body2" component="p">
+                                            Access a vast database of active real estate listings across various regions.
+                                        </Typography>
+                                    </Paper>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Paper elevation={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', p: theme.spacingFactor.single, textAlign: 'center', boxShadow: 1 }}>
+                                        <Typography variant="h4" component="h2">
+                                            3
+                                        </Typography>
+                                        <Typography variant="h6" component="p">
+                                            Analysis Tools
+                                        </Typography>
+                                        <Typography variant="body2" component="p">
+                                            Leverage our in-depth market analysis tools to stay ahead of trends and make informed decisions.
+                                        </Typography>
+                                    </Paper>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Paper elevation={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', p: theme.spacingFactor.single, textAlign: 'center', boxShadow: 1 }}>
+                                        <Typography variant="h4" component="h2">
+                                            10+
+                                        </Typography>
+                                        <Typography variant="h6" component="p">
+                                            Visualization Methods
+                                        </Typography>
+                                        <Typography variant="body2" component="p">
+                                            Explore diverse data visualization methods to gain insights into real estate trends and aggregate data by municipality.
+                                        </Typography>
+                                    </Paper>
+                                </Grid>
+                            </Grid>
+                        </Box>
 
-                <div className="spacer"></div>
+                        {/* How It Works Section */}
+                        <Box sx={{ mb: theme.spacingFactor.single, textAlign: 'center' }}>
+                            <Paper elevation={3} sx={{ p: theme.spacingFactor.single, boxShadow: 1 }}>
+                                <Typography variant="h2" component="h1" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 'bold' }}>
+                                    How It Works
+                                </Typography>
+                                <Typography variant="body1" component="p" gutterBottom>
+                                    Start by using our Explore feature to sift through market trends and historical data or use our Direct Search to look up specific properties. Here’s how you can benefit:
+                                </Typography>
+                                <ul style={{ listStyleType: 'none', paddingLeft: 0, textAlign: 'left', display: 'inline-block', marginTop: '8px' }}>
+                                    <li className="custom-li" style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                        <i className="fas fa-chart-bar" style={{ marginRight: '8px' }}></i>
+                                        <Link href="/explore" color="inherit">
+                                            <Typography variant="body1">
+                                                <strong>Explore:</strong> Analyze broader market trends to identify areas with high growth potential.
+                                            </Typography>
+                                        </Link>
+                                    </li>
+                                    <li className="custom-li" style={{ display: 'flex', alignItems: 'center' }}>
+                                        <i className="fas fa-search" style={{ marginRight: '8px' }}></i>
+                                        <Link href="/search" color="inherit">
+                                            <Typography variant="body1">
+                                                <strong>Direct Search:</strong> Instantly retrieve detailed information on any listed property.
+                                            </Typography>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </Paper>
+                        </Box>
 
-                {/* Why Use Our Platform Section */}
-                <div className="hero-content text-center">
-                    <h2 className="center">Why Use Our Platform?</h2>
-                    <p className="flow-text">
-                        Our platform simplifies the complexity of real estate data to provide you with easy-to-understand insights and actionable advice. By integrating comprehensive market data and predictive analytics, we enable you to:
-                        <ul className="fa-ul">
-                            <li className="custom-li"><span className="fa-li"><i className="fas fa-chart-line"></i></span>Evaluate investment viability through intuitive visualizations and automated analysis.</li>
-                            <li className="custom-li"><span className="fa-li"><i className="fas fa-clock"></i></span>Access real-time data to stay ahead in fast-moving markets.</li>
-                            <li className="custom-li"><span className="fa-li"><i className="fas fa-balance-scale"></i></span>Compare potential investments against market benchmarks to make informed decisions.</li>
-                        </ul>
-                    </p>
-                </div>
-            </section>
+                        {/* Why Use Our Platform Section */}
+                        <Box sx={{ mb: theme.spacingFactor.single, textAlign: 'center' }}>
+                            <Paper elevation={3} sx={{ p: theme.spacingFactor.single, boxShadow: 1 }}>
+                                <Typography variant="h2" component="h1" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 'bold' }}>
+                                    Why Use Our Platform?
+                                </Typography>
+                                <Typography variant="body1" component="p" gutterBottom>
+                                    Our platform simplifies the complexity of real estate data to provide you with easy-to-understand insights and actionable advice. By integrating comprehensive market data and predictive analytics, we enable you to:
+                                </Typography>
+                                <ul style={{ listStyleType: 'none', paddingLeft: 0, textAlign: 'left', display: 'inline-block', marginTop: '8px' }}>
+                                    <li className="custom-li" style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                        <i className="fas fa-chart-line" style={{ marginRight: '8px' }}></i>
+                                        <Typography variant="body1">
+                                            Evaluate investment viability through intuitive visualizations and automated analysis.
+                                        </Typography>
+                                    </li>
+                                    <li className="custom-li" style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                        <i className="fas fa-clock" style={{ marginRight: '8px' }}></i>
+                                        <Typography variant="body1">
+                                            Access real-time data to stay ahead in fast-moving markets.
+                                        </Typography>
+                                    </li>
+                                    <li className="custom-li" style={{ display: 'flex', alignItems: 'center' }}>
+                                        <i className="fas fa-balance-scale" style={{ marginRight: '8px' }}></i>
+                                        <Typography variant="body1">
+                                            Compare potential investments against market benchmarks to make informed decisions.
+                                        </Typography>
+                                    </li>
+                                </ul>
+                            </Paper>
+                        </Box>
 
-            <div className="spacer"></div>
-
-            {/* Contact Section */}
-            <section className="hero-section center" style={{ backgroundImage: `url(${nightstandImage})` }}>
-                <div className="hero-content text-center">
-                    <h2 className="center">Ready to Dive In?</h2>
-                    <p className="flow-text">Whether you're assessing a single property or exploring broader market dynamics, our platform equips you with the tools to perform detailed analyses that drive your investment decisions. Get started today to transform the way you evaluate real estate.</p>
-                </div>
-
-                <div className="spacer"></div>
-
-                <div className="hero-content text-center">
-                    <h2 className="center">Contact Us</h2>
-                    <p className="flow-text">
-                        Our features are currently in an experimental phase. If you encounter any issues, please let us know by filling out the form below.
-                        {/* Contact Form for Reporting Issues */}
-                        <form id="issueReportForm" className="container" onSubmit={(e) => handleSubmit(e)}>
-                            <div className="input-field">
-                                <input id="user_email" type="email" name="user_email" required value={userEmail} onChange={(e) => setUserEmail(e.target.value)} />
-                                <label for="user_email">Your Email:</label>
-                            </div>
-                            <div className="input-field">
-                            <textarea id="issue_description" className="materialize-textarea" name="issue_description" required value={issueDescription} onChange={(e) => setIssueDescription(e.target.value)} />
-                                <label for="issue_description">Describe the Issue:</label>
-                            </div>
-                            <button id="reportIssueBtn" className="btn waves-effect waves-light main-color" type="submit">Report Issue</button>
-                            <MessageContainer flash_id="report" maxMessages={1} />
-                        </form>
-                    </p>
-                </div>
-            </section>
-        </main>
-
+                        {/* Contact Section */}
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Paper elevation={3} sx={{ p: theme.spacingFactor.single, boxShadow: 1 }}>
+                                <Typography variant="h2" component="h1" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 'bold' }}>
+                                    Contact Us
+                                </Typography>
+                                <Typography variant="body1" component="p" sx={{ mb: theme.spacingFactor.single }}>
+                                    Our features are currently in an experimental phase. If you encounter any issues, please let us know by filling out the form below.
+                                </Typography>
+                                <Box sx={{ textAlign: 'left', p: theme.spacingFactor.single, borderRadius: theme.borderRadius.quarter, boxShadow: 3, backgroundColor: 'white' }}>
+                                    {/* Contact Form for Reporting Issues */}
+                                    <Box component="form" onSubmit={handleSubmit} sx={{  display: 'flex', flexDirection: 'column', gap: theme.spacingFactor.half }}>
+                                        <StyledTextField
+                                            id='user_email'
+                                            label='Your Email'
+                                            name='user_email'
+                                            value={userEmail}
+                                            required
+                                            fullWidth
+                                            onChange={(e) => setUserEmail(e.target.value)}
+                                        />
+                                        <StyledTextField
+                                            id='issue_description'
+                                            label='Describe the Issue'
+                                            name='issue_description'
+                                            value={issueDescription}
+                                            required
+                                            fullWidth
+                                            multiline
+                                            rows={4}
+                                            onChange={(e) => setIssueDescription(e.target.value)}
+                                        />
+                                        <StyledButton
+                                            children = 'Report Issue'
+                                            style = 'secondary'
+                                            fullWidth
+                                            type = 'submit'
+                                        />
+                                        
+                                        <MessageContainer flash_id="report" maxMessages={1} />
+                                    </Box>
+                                </Box>
+                            </Paper>
+                        </Box>
+                    </Paper>
+                </Container>
+            </Box>
+        </Layout>
     );
 }
 

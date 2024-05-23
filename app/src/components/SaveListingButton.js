@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
+import { IconButton, Tooltip } from '@mui/material';
+import { Star, StarBorder } from '@mui/icons-material';
 import { useAuth } from '../util/AuthContext';
-import fetchBackendApi from '../util/Util';
 
-import '../styles/Table.css'
 
 const SaveButton = ({ propertyId, initialSavedState }) => {
     const [isSaved, setIsSaved] = useState(initialSavedState);
-    const { authState, getCsrfToken } = useAuth();
+    const { authState, fetchBackendApiWithContext } = useAuth();
 
     const toggleSave = async () => {
         console.log("Toggling save state for property ID: ", propertyId);
         try {
-            const data = await fetchBackendApi('toggle-save', {
+            const data = await fetchBackendApiWithContext('toggle-save', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': await getCsrfToken()
-                },
                 data: JSON.stringify({ propertyId })
             });
             if (data.success) {
@@ -30,14 +26,23 @@ const SaveButton = ({ propertyId, initialSavedState }) => {
     };
 
     return (
-        <button
-            className={`save-btn ${isSaved ? 'saved' : 'unsaved'}`}
-            onClick={toggleSave}
-            disabled={!authState.isAuthSession}
-        >
-            <i className={`${isSaved ? 'fas fa-star' : 'far fa-star'}`}></i>
-            {isSaved ? ' Unsave' : ' Save'}
-        </button>
+        <Tooltip title={isSaved ? 'Unsave' : 'Save'} arrow>
+            <span>
+                <IconButton
+                    onClick={toggleSave}
+                    color={isSaved ? 'primary' : 'default'}
+                    disabled={!authState.isAuthSession}
+                    aria-label={isSaved ? 'Unsave' : 'Save'}
+                    sx={{
+                        '&:focus': {
+                            backgroundColor: 'transparent'
+                        }
+                    }}
+                >
+                    {isSaved ? <Star /> : <StarBorder />}
+                </IconButton>
+            </span>
+        </Tooltip>
     );
 };
 

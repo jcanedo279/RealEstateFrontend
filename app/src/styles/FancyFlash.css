@@ -1,62 +1,38 @@
-/* FancyFlash Container Styling */
 .fancy-flash-container {
+    z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
 }
 
-/* FancyFlash Message Styling */
 .fancy-flash {
-    width: 75%;
-    text-align: center; /* Center text horizontally */
-    padding: 10px;
-    font-weight: bold;
-    background-color: #17a2b8;
-    font-size: 1.2em;
-    color: white;
-    border-radius: 5px;
-    box-shadow: var(--default-shadow);
+    border-radius: 4px;
 }
 
-/* Flash Message Button Styling */
-.fancy-flash button {
-    float: right; /* Float button to the right */
-    background: none;
-    border: none;
-    color: inherit;
-    font-weight: bolder;
-    font-size: 1.2em;
-    box-shadow: var(--default-shadow);
-    cursor: pointer;
-    width: 50px; /* Adjust width as needed */
-}
-
-/* FancyFlash Statuses. */
+/* FancyFlash Statuses */
 .fancy-flash.info {
-    background-color: #17a2b8;
     border-color: #17a2b8;
+    color: #17a2b8;
 }
 
 .fancy-flash.warning {
-    background-color: #ffc107;
     border-color: #ffc107;
+    color: #ffc107;
 }
 
 .fancy-flash.error {
-    background-color: #dc3545;
     border-color: #dc3545;
+    color: #dc3545;
 }
 
 .fancy-flash.success {
-    background-color: #28a745;
     border-color: #28a745;
+    color: #28a745;
 }
 
 .fancy-flash.fail {
-    background-color: #000000;
     border-color: #000000;
+    color: #000000;
 }
 
 

@@ -45,13 +45,13 @@ h3 {
 }
 
 /* Button Style */
-.btn, .btn:active, .btn:disabled{
-    background-color: var(--main-color) !important;
-}
+/* .btn{
+    background-color: var(--main-color);
+} */
 
-.btn:hover {
+/* .btn:hover {
     background-color: var(--main-color-darker) !important;
-}
+} */
 
 /* Content Container */
 .container {
@@ -66,13 +66,6 @@ h3 {
 .half-width {
     max-width: 50%;
     align-items: center;
-}
-
-/* Lists */
-ul {
-    list-style: none; /* Consider using custom icons for bullets */
-    padding-left: 0;
-    margin-bottom: 2rem;
 }
 
 /* Additional global styles */
@@ -120,36 +113,6 @@ a:hover {
     width: 100%;
     margin-top: 50px;
     overflow-x: auto;
-}
-
-/* Page content list items */
-.custom-li {
-    padding-left: 2rem; /* Space for the icon, adjust as necessary */
-    margin-bottom: 0.75rem;
-    list-style: none; /* Removes default list styling */
-}
-
-.custom-li .fa-li {
-    position: absolute;
-    color: var(--main-color);
-    left: 0;
-}
-
-.sidenav i.fas {
-    color: var(--main-color);
-}
-
-.custom-li i {
-    margin-right: 10px; /* Space between the icon and the text */
-}
-
-li .fa-text {
-    color: var(--text-color)
-}
-
-.fa-ul {
-    position: relative;
-    padding-left: 2.5rem; /* Space for the icon, adjust if needed */
 }
 
 .spacer {

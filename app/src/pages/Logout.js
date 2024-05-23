@@ -1,22 +1,16 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../util/AuthContext';
-import fetchBackendApi from '../util/Util';
+
 
 function Logout() {
     const navigate = useNavigate();
-    const { getCsrfToken, logout } = useAuth();
+    const { logout, fetchBackendApiWithContext } = useAuth();
 
     useEffect(() => {
         const logout_request = async () => {
             try {
-                await fetchBackendApi('/clean-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-Token': await getCsrfToken()
-                    }
-                });
+                await fetchBackendApiWithContext('/clean-session', { method: 'POST' });
                 logout();
             } catch (error) {
                 console.error('Logout failed', error.message);

@@ -4,14 +4,15 @@ import {
     isAuthSession,
     startAnonSession,
     startAuthSession,
-    maybeGetCsrfToken
+    fetchBackendApi
 } from './AuthUtil';
+
 
 export const AuthContext = createContext({
     authState: { isAuthSession: isAuthSession() },
     login: () => {},
     logout: () => {},
-    getCsrfToken: async () => {}
+    fetchBackendApiWithContext: async () => {}
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -22,25 +23,31 @@ export const AuthProvider = ({ children }) => {
     });
 
     const login = async (email, password) => {
-        return await startAuthSession(email, password);
+        const data = await startAuthSession(email, password);
+        setAuthState({ isAuthSession: isAuthSession() });
+        return data;
     };
 
     const logout = async () => {
-        return await startAnonSession();
+        const data = await startAnonSession();
+        setAuthState({ isAuthSession: isAuthSession() });
+        return data;
     };
 
-    const getCsrfToken = async () => {
-        return await maybeGetCsrfToken();
+    const fetchBackendApiWithContext = async (route, options = {}) => {
+        const data = await fetchBackendApi(route, options);
+        setAuthState({ isAuthSession: isAuthSession() });
+        return data;
     }
 
     useEffect(() => {
         setAuthState({
             isAuthSession: isAuthSession()
         });
-    }, [login, logout, getCsrfToken]);
+    }, [login, logout, fetchBackendApiWithContext]);
 
     return (
-        <AuthContext.Provider value={{ authState, login, logout, getCsrfToken }}>
+        <AuthContext.Provider value={{ authState, login, logout, fetchBackendApiWithContext }}>
             {children}
         </AuthContext.Provider>
     );
