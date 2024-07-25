@@ -16,6 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import ExploreIcon from '@mui/icons-material/Explore';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import SearchIcon from '@mui/icons-material/Search';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -112,28 +113,16 @@ const Layout = ({ children, alignTop = 'space', opacity = 1 }) => {
                                 }
                             />
                         </ListItem>
-                            <ListItem button component={Link} to="/search">
-                            <ListItemIcon><SearchIcon /></ListItemIcon>
+                        <ListItem button component={Link} to="/compare">
+                            <ListItemIcon><CompareArrowsIcon /></ListItemIcon>
                             <ListItemText
                                 primary={
                                     <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                                        Property Search
+                                        Compare
                                     </Typography>
                                 }
                             />
                         </ListItem>
-                        {isAuthSession && (
-                            <ListItem button component={Link} to="/saved">
-                                <ListItemIcon><FavoriteIcon /></ListItemIcon>
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                                            Saved
-                                        </Typography>
-                                    }
-                                />
-                            </ListItem>
-                        )}
                     </List>
                 </Box>
             </Drawer>

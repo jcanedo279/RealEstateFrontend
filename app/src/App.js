@@ -7,12 +7,11 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthRoute } from './util/AuthContext';
 import Home from './pages/Home';
 import Explore from './pages/Explore';
-import Search from './pages/Search';
+import PropertyComparison from './pages/PropertyComparison';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import DeleteAccount from './pages/DeleteAccount';
 import Profile from './pages/Profile';
-import Saved from './pages/Saved';
 import Register from './pages/Register';
 import Test from './misc_pages/Test';
 import AccountVerification from './misc_pages/EmailVerification';
@@ -38,8 +37,7 @@ const App = () => {
               <Route path="/delete-account" element={<AuthRoute element={DeleteAccount} />} />
               {/* Listing routes */}
               <Route path="/explore" element={<Explore />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/saved" element={<AuthRoute element={Saved} />} />
+              <Route path="/compare" element={<PropertyComparison />} />
               {/* Misc routes */}
               <Route path="/email/verify/:token" element={<AccountVerification />} />
               <Route path="/password/request-new" element={<PasswordRequestNew />} />

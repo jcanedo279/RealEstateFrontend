@@ -1,7 +1,3 @@
-/* Add Materialize CSS via CDN */
-@import url('https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css');
-
-
 :root {
     --main-color: #d4182d;
     --main-color-darker: #b41426;

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import {
     isAuthSession,
@@ -6,7 +6,6 @@ import {
     startAuthSession,
     fetchBackendApi
 } from './AuthUtil';
-
 
 export const AuthContext = createContext({
     authState: { isAuthSession: isAuthSession() },
@@ -22,29 +21,29 @@ export const AuthProvider = ({ children }) => {
         isAuthSession: isAuthSession()
     });
 
-    const login = async (email, password) => {
+    const login = useCallback(async (email, password) => {
         const data = await startAuthSession(email, password);
         setAuthState({ isAuthSession: isAuthSession() });
         return data;
-    };
+    }, []);
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         const data = await startAnonSession();
         setAuthState({ isAuthSession: isAuthSession() });
         return data;
-    };
+    }, []);
 
-    const fetchBackendApiWithContext = async (route, options = {}) => {
+    const fetchBackendApiWithContext = useCallback(async (route, options = {}) => {
         const data = await fetchBackendApi(route, options);
         setAuthState({ isAuthSession: isAuthSession() });
         return data;
-    }
+    }, []);
 
     useEffect(() => {
         setAuthState({
             isAuthSession: isAuthSession()
         });
-    }, [login, logout, fetchBackendApiWithContext]);
+    }, []);
 
     return (
         <AuthContext.Provider value={{ authState, login, logout, fetchBackendApiWithContext }}>
@@ -52,7 +51,6 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-
 
 // A component to handle route protection
 export const AuthRoute = ({ element: Element, ...rest }) => {

@@ -7,6 +7,7 @@ import {
     TableRow,
     Paper,
     Typography,
+    Button,
     Box,
     TableCell,
     TablePagination,
@@ -16,10 +17,10 @@ import {
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import SaveButton from '../components/SaveListingButton';
-import LoadingComponent from '../components/Loading';
-import MessageContainer from '../flash/FlashMessageContainer';
-import { useFlashMessage } from '../flash/FlashMessageContext';
 import TableTooltip from '../components/TableTooltip';
+import GraphAnalysisOverlay from '../graphing/GraphAnalysisOverlay';
+import LoadingComponent from '../components/Loading';
+import { useFlashMessage } from '../flash/FlashMessageContext';
 import { useAuth } from '../util/AuthContext';
 
 
@@ -71,7 +72,7 @@ const StyledTablePagination = styled(TablePagination)`
   }
 `;
 
-const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyResponseMessage }) => {
+const ListingsRetriever = ({ route, propertyFormData, shouldFetch, onDataFetched, emptyResponseMessage }) => {
     const [triggerFetch, setTriggerFetch] = useState(false);
     const [listings, setListings] = useState([]);
     const [totalProperties, setTotalProperties] = useState(0);
@@ -84,6 +85,9 @@ const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyR
     const hoveredCellRef = useRef(null);
     const { fetchBackendApiWithContext } = useAuth();
     const theme = useTheme();
+
+    const [overlayOpen, setOverlayOpen] = useState(false);
+    const [selectedPropertyData, setSelectedPropertyData] = useState(null);
 
     useEffect(() => {
         if (triggerFetch) {
@@ -108,15 +112,15 @@ const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyR
     const fetchData = async () => {
         setLoading(true);
         try {
-            const completeFormData = {
-                ...formData,
+            const newPropertyFormData = {
+                ...propertyFormData,
                 current_page: currentPage + 1, // Send currentPage as 1-based index
                 num_properties_per_page: rowsPerPage,
             };
 
             const data = await fetchBackendApiWithContext(route, {
                 method: 'POST',
-                data: JSON.stringify(completeFormData),
+                data: JSON.stringify(newPropertyFormData),
             });
 
             setListings(data.properties);
@@ -160,6 +164,16 @@ const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyR
         hoveredCellRef.current = null;
     };
 
+    const handleOverlayOpen = (zpid) => {
+        setSelectedPropertyData(listings.find((listing) => listing.zpid === zpid));
+        setOverlayOpen(true);
+    };
+
+    const handleOverlayClose = () => {
+        setOverlayOpen(false);
+        setSelectedPropertyData(null);
+    };
+
     if (loading) {
         return <LoadingComponent />;
     }
@@ -200,6 +214,11 @@ const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyR
                                                 </StyledTableCell>
                                             ),
                                     )}
+                                    <StyledTableCell
+                                        sx={{ fontWeight: 'bold', backgroundColor: '#e0e0e0' }}
+                                    >
+                                        Analysis
+                                    </StyledTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -234,6 +253,11 @@ const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyR
                                                     </StyledTableCell>
                                                 ),
                                         )}
+                                        <StyledTableCell>
+                                            <Button variant="contained" color="primary" onClick={() => handleOverlayOpen(listing.zpid)}>
+                                                Analyze
+                                            </Button>
+                                        </StyledTableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -275,6 +299,8 @@ const ListingsRetriever = ({ route, formData, shouldFetch, onDataFetched, emptyR
                     </Box>
 
                     <TableTooltip show={tooltipInfo.show} position={tooltipInfo.position} content={tooltipInfo.content} />
+
+                    <GraphAnalysisOverlay open={overlayOpen} onClose={handleOverlayClose} selectedPropertyData={selectedPropertyData} propertyFormData={propertyFormData} />
                 </Box>
             )}
         </Box>

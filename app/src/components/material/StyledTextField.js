@@ -24,9 +24,7 @@ const StyledTextField = ({
           '& fieldset': { borderColor: theme.palette.primary.main },
           '&:hover fieldset': { borderColor: theme.palette.primary.main },
           '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
-          '& input': { padding: '0 12px' },
       },
-      // Apply additional styles.
       ...sx
   };
 
