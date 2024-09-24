@@ -30,6 +30,10 @@ const DistributionPlot = ({ graphFormData, propertyData, isFetching, setIsFetchi
         method: 'POST',
         data: JSON.stringify({ ...graphFormData, propertyData }),
       });
+      await fetchBackendApiWithContext('/clustering_graph_data', {
+        method: 'POST',
+        data: JSON.stringify({ ...graphFormData, propertyData }),
+      });
       console.log('Fetched data:', result);
       setData(result);
     } catch (error) {
